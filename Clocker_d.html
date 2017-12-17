@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>BreathClock</title>
+    <style>
+      body { background-color:#ccffff }
+
+	#go {
+		margin-top: 1px;
+		font-weight: 700;
+		color: white;
+		text-decoration: none;
+		padding: .8em 1em calc(.8em + 3px);
+		border-radius: 3px;
+		background: #74afdd;
+		box-shadow: 0 -3px #417caa inset;
+		transition: 0.2s;
+    width: 100px;
+		font-size: 20px;
+	}
+
+	#go:hover { background: #417caa; }
+	#go:active {
+		background: #205a88;
+		box-shadow: 0 3px #205a88 inset;
+	}
+
+        #cycle {
+		font-size: 32px;
+		text-align: center;
+
+		border: 1px solid #7FFF00;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+    width:auto;
+	}
+
+   	#total_clock {
+                text-align: left;
+		text-shadow: 0 0 10px #7FFF00;
+		color: #000000;
+		font-size: 26px;
+		vertical-align: middle;
+	}
+
+   	#current_time {
+                text-align: left;
+		text-shadow: 0 0 10px #7FFF00;
+		color: #000000;
+		font-size: 26px;
+		vertical-align: middle;
+	}
+
+	#state {
+		font-size: 50px;
+		text-align: center;
+	}
+        #phase {
+		text-align: center;
+		font-size: 80px;
+		margin: 20px auto;
+		text-shadow: 0 0 10px #7FFF00;
+		color: #9900cc;
+    }
+
+	#phase_duration {
+		text-align: center;
+		font-size: 30px;
+		margin: 20px auto;
+		color: black;
+		}
+
+	#block2 {
+		width: 100px;
+		height: 1px;
+		background: red;
+    margin-left: 20px;
+		-webkit-transition: height 4s cubic-bezier(0, 0, 1, 1); /* For Safari 3.1 to 6.0 */
+		transition: height 4s cubic-bezier(0, 0, 1, 1), background 4s cubic-bezier(0, 0, 1, 1);
+	}
+	}
+
+
+
+
+    </style>
+
+  </head>
+  <body>
+    <div style="float:left">
+    <input type="button" id="go" value="GO" align = "top">
+
+    <select name="cycle" id="cycle" size=1>
+      <option value="4">4 сек.</option>
+      <option selected="selected" value="6">6 сек.</option>
+      <option value="8">8 сек.</option>
+      <option value="10">10 сек.</option>
+      <option value="12">12 сек.</option>
+    </select>
+    </div>
+
+
+  <div style="float:left; padding-left: 20px">
+       &nbsp; &nbsp; &nbsp; <span id="total_clock">00:00</span>      &nbsp; &nbsp; &nbsp; &nbsp;
+      <span id="current_time">00:00:00</span>
+  </div>
+   <div style="width: auto; height: 50px"> </div>
+</br>
+
+ <div id="state" style="width: 200px; display: inline-block; margin-left: 10px" > Перерва </div>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span id="phase">00</span> <span id="phase_duration"> 00 </span>
+
+</br>
+</br>
+
+<div>
+  <div style="display: inline-block">
+  <img id="picture" src="./jdun1.jpg" alt="" width="200" height="128" hspace="5" marging="0px" padding="5px" style="border:2px solid grey" /> &nbsp; &nbsp;
+
+  </div>
+
+    <div id="block2" style="display: inline-block"></div>
+</div>
+
+
+
+<script type="text/javascript">
+var tint = null; // Ідентификатор таймера
+var sec = 0;     // Поточні секунди циклу
+var tsec = 0;	 // Поточні секунди загального часу
+var t=0;    // Значение поля "секунды"
+var flag = 0; // флаг фази: 0 - пауза, 1 -вдих, 2 - пауза, 3 - видих
+var pic = document.getElementById('picture');
+var Bblock = document.getElementById('block');
+var B1block = document.getElementById('block1');
+var B2block = document.getElementById('block2');
+var currentTime = document.getElementById('current_time'); //Элемент выдображення поточного часу доби
+
+
+tint = setInterval(timer, 1000);
+
+
+go.onclick = function() {    // функцыя переключення при клацанны на кнопку GO
+
+//    if (tint == null) { //Якщо таймер не запущений
+  if (go.value == 'GO') {
+//  if (flag = 0) {
+	t = document.getElementById('cycle').value;
+//	tint = setInterval(timer, 1000);
+	go.value = "PAUSE";
+	cycle.disabled = true;
+	phase_duration.innerHTML = (t<10) ? "0" + t : t ;
+	flag = 0;
+
+    } else {   //Якщо таймер запущений
+
+//      clearInterval(tint);
+//      tint = null;
+      phase.innerHTML = '00';
+      phase_duration.innerHTML = '00';
+      phase_duration.style.color = "black"
+      sec = 0;
+      go.value = "GO";
+      pic.src = "./jdun1.jpg";
+      state.innerHTML = "Перерва";
+      state.style.color = "black"
+      cycle.disabled = false;
+      flag = 0;
+      block2.style.transitionDuration = 0 + 's';
+      block2.style.height = '1px';
+      block2.style.background = 'red';
+
+    }
+}
+
+function time ()
+{
+var date = new Date();
+var tim = date.getHours()+':'+((date.getMinutes() < 10) ? "0" + date.getMinutes() : date.getMinutes())+':'+ ((date.getSeconds() < 10) ? "0" + date.getSeconds() : date.getSeconds());
+return tim
+}
+
+function timer()
+{
+
+    currentTime.innerHTML = time();
+
+  if (go.value != 'GO') {
+    phase.innerHTML = (sec<10) ? "0" + sec : sec ;
+    m = Math.floor(tsec/60);
+    s = tsec - m*60;
+    total_clock.innerHTML = ((m < 10) ? "0" + m: m)+':'+((s < 10) ? "0" + s : s);
+
+
+    //change state
+    if (sec < t && flag != 1) {
+        state.style.color = '#009933';
+      phase_duration.style.color = "#009933"
+        state.innerHTML = 'Вдих';
+	      pic.src = "./in.jpg";
+        block2.style.transitionDuration = t + 's';
+
+//	alert("oho");
+	block2.style.height = '130px';
+	block2.style.background = '#9900cc';
+
+	phase_duration.innerHTML = (t<10) ? "0" + t : t ;
+        flag = 1;
+    } else if (sec >= t && sec < t*4 && flag != 2) {
+        state.style.color = 'grey';
+        state.innerHTML = 'Затримка';
+        phase_duration.style.color = "grey"
+	pic.src = "./pause.jpg";
+	phase_duration.innerHTML = t*5;
+        flag = 2;
+    } else if (sec >= t*5 && flag != 3) {
+        state.style.color = '#74afdd';
+        phase_duration.style.color = "#74afdd"
+        state.innerHTML = 'Видих';
+	pic.src = "./out.jpg";
+        phase_duration.innerHTML = t*7;
+        flag = 3;
+        block2.style.transitionDuration = 2*t + 's';
+	block2.style.height = '1px';
+	block2.style.background = 'red';
+
+    }
+
+    // increase seconds
+    tsec++;
+    if (sec+1 == t*7) {
+      sec = 0;
+    } else { sec++; }
+ }
+/*    switch ( flag ) {
+      case 1:
+//        B1block.style.height = 128 - ( 128 / t * (sec -1 ) ) + 'px';
+        break;
+        case 2:
+          B1block.style.height = 0;
+//        if ( B1block.style.color ==  = B1block.style.color ;
+          break;
+      case 3:
+//        B1block.style.height = ( 128 / (2*t) * (sec - 5*t -1) ) + 'px';
+        break;
+      } */
+
+}
+
+/*      function timer1()
+      {
+        ( ttt == 10 ) ? 0 : ttt++ ;
+        switch ( flag ) {
+         case 1:
+          B1block.style.height = 128 - ( 128 / t * (sec -1 ) ) - Math.round(128 / ( 10 * t ) * ttt) + 'px';
+          break;
+         case 2:
+  //        B1block.style.height = 0;
+          break;
+         case 3:
+          B1block.style.height = ( 128 / (2*t) * (sec - 5*t -1) + Math.round(128 / ( 20 * t ) * ttt )) + 'px';
+          break;
+           }
+
+      } */
+
+    </script>
+
+
+  </body>
+</html>
